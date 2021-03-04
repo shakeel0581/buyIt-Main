@@ -97,5 +97,5 @@ export let api = {
   categories: 'https://thecodeditors.com/test/buy_it/api-get-categories.php',
   shop: 'https://thecodeditors.com/test/buy_it/api-get-shopname.php',
   Recent: 'https://thecodeditors.com/test/buy_it/api-get-recentproducts.php',
-  changepassword: mainurl2 + 'api-user-changepassword.php?id=',
+  changepassword: mainurl + 'api-user-changepassword.php?id=',
 };

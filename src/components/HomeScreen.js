@@ -266,7 +266,7 @@ const Recents = ({countPrss}) => {
                   api.addcart +user+
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id=' + user;
+                  '&quantity=1';
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -481,7 +481,7 @@ const FeaturedSlider = ({countPrss}) => {
                   api.addcart +user+
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id=' + user;
+                  '&quantity=1';
                 fetch(uri)
                   .then((response) => response.json())
                   .then((json) => {
@@ -615,7 +615,7 @@ const BestSeller = ({countPrss}) => {
                   api.addcart +user+
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id=' + user;
+                  '&quantity=1';
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -748,7 +748,7 @@ const RecommenderSlider = ({countPrss}) => {
                   api.addcart +user+
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id=' + user;
+                  '&quantity=1';
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -837,7 +837,9 @@ const App = () => {
           fetch(uri)
             .then((response) => response.json())
             .then((json) => {
-              setCount(json.Data.length);
+              if(json.Data){
+                setCount(json.Data.length);
+              }
             })
             .catch((error) => console.error(error))
           })

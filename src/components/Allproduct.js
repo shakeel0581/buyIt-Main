@@ -158,7 +158,7 @@ const Allproduct = (props) => {
     let navigation = useNavigation();
     const screenHeight = Dimensions.get('window').height;
     const screenWidth = Dimensions.get('window').width;
-    const [isLoading, setLoading] = useState(true);
+    const [isLoading, setLoading] = useState(false);
     const [Allproduct, setAllproduct] = useState([]);
     const [cart, setCart] = useState([]);
     
@@ -183,6 +183,29 @@ const Allproduct = (props) => {
       }
       
     }, []);
+
+    const rFResh = () => {
+      setLoading(true);
+      if (v_id) {
+        fetch(api.shopProducts+v_id)
+        .then((response) => response.json())
+        .then((json) => {
+          setAllproduct(json);
+          setLoading(false);
+
+        })
+        .catch((error) => console.error(error))
+      } else {
+        fetch(api.allproduct)
+        .then((response) => response.json())
+        .then((json) => {
+          setAllproduct(json);
+          setLoading(false);
+      
+        })
+        .catch((error) => console.error(error))
+      }
+    }
   
   
     return (
@@ -197,6 +220,8 @@ const Allproduct = (props) => {
             marginTop: 0,
           }}>
            <FlatList
+           refreshing={isLoading}
+           onRefresh={() => rFResh()}
          key={'_'}
          numColumns={2}
               data={Allproduct.Data}
@@ -301,13 +326,11 @@ const App = (props) => {
       <StatusBar barStyle="dark-content" />
       <Header />
       <View style={{height: screenHeight, alignItems:'center' }}>
-        <ScrollView style={{marginTop: 20, marginBottom: 100}}>
           <Text style={{fontSize: 20, fontWeight: 'bold', padding: 10, marginLeft: 10, color:'#5b5e5c'}}>
             {V_Name == '' ? 'All Products' : V_Name}
           </Text>
          <Allproduct {...props} />
            
-        </ScrollView>
       </View>
     </>
   );

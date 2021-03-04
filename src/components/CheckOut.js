@@ -4,6 +4,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {colors, images} from './constant';
 import AsyncStorage from '@react-native-community/async-storage';
+import { CommonActions } from '@react-navigation/native';
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -41,27 +43,7 @@ const RenderHeader = () => {
           <Entypo name="menu" size={30} />
         </TouchableOpacity>
         <Image source={images.logo} style={{height: 30, width: '30%'}} />
-        <Text
-          style={{
-            position: 'absolute',
-            right: '-1%',
-            top: '20%',
-            fontSize: 10,
-            backgroundColor: colors.ORANGE.DEFAULT,
-            borderRadius: 50,
-            zIndex: 12,
-            height: 18,
-            width: 18,
-            textAlign: 'center',
-            paddingTop: 2,
-            color: 'white',
-          }}>
-          23
-        </Text>
-        <TouchableOpacity style={{position: 'absolute', right: '3%'}}>
-          <AntDesign name="shoppingcart" size={25} color="black" />
-          <Text style={{color: 'black'}}>cart</Text>
-        </TouchableOpacity>
+        
       </View>
     </View>
   );
@@ -84,8 +66,12 @@ const CheckOut = ({route, navigation}) => {
   const [Payment, setPayment] = useState('cash');
 
   const handleCheckOutTap = (e) => {
-    AsyncStorage.getItem('userId').then((result) => {
-      console.log(result);
+    AsyncStorage.getItem('userData').then((result) => {
+      AsyncStorage.getItem('RandomNumber').then((result2) => {
+      const userData = JSON.parse(result);
+      const random = JSON.parse(result2);
+      console.log('USER ID IN CHECK OUT',userData.user_id);
+      console.log('Random IN CHECK OUT',random);
       if (Fname == '') {
         Alert.alert('Enter First Name');
         return;
@@ -129,10 +115,14 @@ const CheckOut = ({route, navigation}) => {
         Alert.alert('Enter Email');
         return;
       }
-
+      //city=karachi&state=sindh&zip=787898&phone=03001234567&email=demo@gmail.com&payment
       const uri =
-        api.checkout +
-        'first_name=' +
+        'https://thecodeditors.com/test/buy_it/api-get-checkout.php?' +
+        'random_id='+
+        random+
+        '&user_id='+
+        userData.user_id+
+        '&first_name=' +
         Fname +
         '&last_name=' +
         Lname +
@@ -154,17 +144,26 @@ const CheckOut = ({route, navigation}) => {
         Phone +
         '&email=' +
         Email +
-        '&payment=cash&' +
-        result;
-      console.log(uri);
+        '&payment=cash';
+      console.log("CHCK OUT ",uri);
       fetch(uri)
         .then((response) => response.json())
         .then((json) => {
           setData(json);
-          Alert.alert(data.result);
+          Alert.alert(json.result,"Order Id: "+json.order_id);
+          console.log('CHECK OUT RESOPONS',json);
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 1,
+              routes: [
+                { name: 'HomeScreen' }
+              ],
+            })
+          )
         })
         .catch((error) => console.error(error))
         .finally(() => setLoading(false));
+      });
     });
 
     //console.log(uri);
@@ -402,7 +401,7 @@ const CheckOut = ({route, navigation}) => {
               Total :
             </Text>
             <Text style={{color: colors.ORANGE.DEFAULT, fontSize: 18}}>
-              PKR 4450
+              PKR {totall}
             </Text>
           </View>
 

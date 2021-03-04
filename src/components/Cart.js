@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   Text,
   View,
@@ -11,20 +11,20 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-import {Icon} from 'native-base';
-import {colors, images} from './constant';
+import { Icon } from 'native-base';
+import { colors, images } from './constant';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import {api, cartimage, cartshow} from './constant';
+import { api, cartimage, cartshow } from './constant';
 import AsyncStorage from '@react-native-community/async-storage';
 import login from './login';
 
-const RenderHeader = ({coutn}) => {
+const RenderHeader = ({ coutn }) => {
   let navigation = useNavigation();
-  
+
   return (
-    <View style={{height: '10%'}}>
+    <View style={{ height: '10%' }}>
       <View
         style={{
           width: '95%',
@@ -40,7 +40,7 @@ const RenderHeader = ({coutn}) => {
             onPress={() => navigation.toggleDrawer()}
           />
         </TouchableOpacity>
-        <Image source={images.logo} style={{height: 30, width: '30%'}} />
+        <Image source={images.logo} style={{ height: 30, width: '30%' }} />
         <Text
           style={{
             position: 'absolute',
@@ -58,9 +58,9 @@ const RenderHeader = ({coutn}) => {
           }}>
           {coutn}
         </Text>
-        <TouchableOpacity style={{position: 'absolute', right: '3%'}}>
+        <TouchableOpacity style={{ position: 'absolute', right: '3%' }}>
           <AntDesign name="shoppingcart" size={25} color="black" />
-          <Text style={{color: 'black'}}>cart</Text>
+          <Text style={{ color: 'black' }}>cart</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -84,8 +84,8 @@ let Login = () => {
 
   const DeleteCart = (a) => {
     //useEffect(() => {
-      setTotalPrice(0);
-      setLoading(true);
+    setTotalPrice(0);
+    setLoading(true);
     const uri = api.deleteitem + a;
     fetch(uri)
       .then((response) => response.json())
@@ -97,13 +97,20 @@ let Login = () => {
           const uri = api.cartshow + Rnumber
           console.log(uri);
           setIsLoading(true);
-    
+
           fetch(uri)
             .then((response) => response.json())
             .then((json) => {
               setIsLoading(false);
               setData(json);
-              setCount(json.Data.length);
+              if (json.Data) {
+                setCount(json.Data.length);
+                let pp = 0;
+                json.Data.map((val) => {
+                  pp += parseInt(val.pro_price)
+                })
+                setTotalPrice(pp);
+              }
             })
             .catch((error) => console.error(error))
             .finally(() => setLoading(false));
@@ -116,11 +123,9 @@ let Login = () => {
 
   let [totalQuantity, setTotalQuantity] = useState(0);
 
-  
+
 
   let price = 0;
-  //let catId = '0';
-  //let [cartId, setCartId] = useState('');
   const [ifLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -136,62 +141,50 @@ let Login = () => {
         .then((json) => {
           setIsLoading(false);
           setData(json);
-          setCount(json.Data.length);
+
+          if (json.Data) {
+            setCount(json.Data.length);
+            let pp = 0;
+            json.Data.map((val) => {
+              pp += parseInt(val.pro_price)
+            })
+            setTotalPrice(pp);
+          }
         })
         .catch((error) => console.error(error))
         .finally(() => setLoading(false));
     });
-      navigation.addListener('focus', () => {
-        AsyncStorage.getItem('RandomNumber').then((result) => {
-          console.log('RandomNumberrr' + result);
-          let Rnumber = JSON.parse(result);
-          const uri = api.cartshow + Rnumber
-          console.log(uri);
-          setIsLoading(true);
-    
-          fetch(uri)
-            .then((response) => response.json())
-            .then((json) => {
-              setIsLoading(false);
-              setData(json);
-            })
-            .catch((error) => console.error(error))
-            .finally(() => setLoading(false));
-        });
+    navigation.addListener('focus', () => {
+      AsyncStorage.getItem('RandomNumber').then((result) => {
+        console.log('RandomNumberrr' + result);
+        let Rnumber = JSON.parse(result);
+        const uri = api.cartshow + Rnumber
+        console.log(uri);
+        setIsLoading(true);
+
+        fetch(uri)
+          .then((response) => response.json())
+          .then((json) => {
+            setIsLoading(false);
+            setData(json);
+            if (json.Data) {
+              setCount(json.Data.length);
+              let pp = 0;
+              json.Data.map((val) => {
+                pp += parseInt(val.pro_price)
+              })
+              setTotalPrice(pp);
+            }
+          })
+          .catch((error) => console.error(error))
+          .finally(() => setLoading(false));
+      });
     })
   }, []);
 
-  const init = () => {
-    
-  }
-
-  //
-  //   useEffect(() => {
-  //     setIsLoading(true);
-  //     AsyncStorage.getItem('userData').then((result) => {
-  //       //console.log('result' + result);
-  //       let user = JSON.parse(result);
-  //       const uri = api.cartshow + user.user_id;
-  //       console.log(uri);
-  //       //Alert.alert('yhn araha hai');
-  //       fetch(uri)
-  //         .then((response) => response.json())
-  //         .then((json) => {
-  //           setIsLoading(false);
-  //           setDataa(json);
-  //           //let user = '';
-  //           //console.log(dataa);
-  //           Alert.alert('refresh hwa');
-  //         })
-  //         .catch((error) => console.error(error))
-  //         .finally(() => setLoading(false));
-  //     });
-  //   }, []);
-  // };
-
   if (ifLoading) {
     return (
-      <View style={{flex: 1, justifyContent: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="black" />
       </View>
     );
@@ -202,9 +195,10 @@ let Login = () => {
         flex: 1,
         backgroundColor: colors.WHITE,
       }}>
+      {console.log('COUTN ITTEM', coutn)}
       <RenderHeader coutn={coutn} />
       <Text
-        style={{padding: 10, borderRadius: 1, elevation: 1, marginBottom: 10}}>
+        style={{ padding: 10, borderRadius: 1, elevation: 1, marginBottom: 10 }}>
         Home <Feather name="chevron-right" size={15} /> Shopping Cart
       </Text>
       <ScrollView
@@ -214,109 +208,112 @@ let Login = () => {
           marginLeft: 'auto',
           marginRight: 'auto',
         }}
+        nestedScrollEnabled={true}
         showsVerticalScrollIndicator={false}>
         <View
           style={{
             width: '98%',
           }}>
-            {console.log('totalPrice',totalPrice)}
+          {console.log('totalPrice', totalPrice)}
           <FlatList
+            nestedScrollEnabled={true}
             // onRefresh={refre}
             // refreshing={isLoading}
             data={data.Data}
-            renderItem={({item}) => (
-                <View
-                  // onPress={setTotalPrice((price += parseInt(item.pro_price)))}
-                  style={{
-                    width: '100%',
-                    alignSelf: 'center',
-                    borderRadius: 1,
-                    elevation: 1,
-                    alignItems: 'center',
-                    marginTop: '5%',
-                    marginBottom: '10%',
-                  }}>
-                    {setTotalPrice((price += parseInt(item.pro_price)))}
-                  <View style={{width: '90%', marginTop: '7%'}}>
-                    <TouchableOpacity onPress={() => DeleteCart(item.cart_id)}>
-                      <Icon
-                        name="close"
-                        type="AntDesign"
-                        style={{fontSize: 18, marginLeft: 'auto'}}
-                      
-                      />
-                    </TouchableOpacity>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        marginTop: 15,
-                      }}>
-                      {/* {dataa.map((item) => {
+            renderItem={({ item }) => {
+              price += parseInt(item.pro_price)
+              return (<View
+                // onPress={setTotalPrice((price += parseInt(item.pro_price)))}
+                style={{
+                  width: '100%',
+                  alignSelf: 'center',
+                  borderRadius: 1,
+                  elevation: 1,
+                  alignItems: 'center',
+                  marginTop: '5%',
+                  marginBottom: '10%',
+                }}>
+
+                <View style={{ width: '90%', marginTop: '7%' }}>
+                  <TouchableOpacity onPress={() => DeleteCart(item.cart_id)}>
+                    <Icon
+                      name="close"
+                      type="AntDesign"
+                      style={{ fontSize: 18, marginLeft: 'auto' }}
+
+                    />
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      marginTop: 15,
+                    }}>
+                    {/* {dataa.map((item) => {
                       console.log(dataa);
                       setTotalQuantity((totalQuantity += item.qty));
                       setTotalPrice((totalPrice += item.qty * item.pro_price));
                     })} */}
-                      <Image
-                        source={{uri: cartimage + item.image_name}}
-                        style={{height: 70, width: 70, marginRight: 10}}
-                      />
-                      <Text
-                        style={{color: 'black', fontSize: 18, paddingTop: 15}}>
-                        {item.pro_name}
-                      </Text>
-                    </View>
+                    <Image
+                      source={{ uri: cartimage + item.image_name }}
+                      style={{ height: 70, width: 70, marginRight: 10 }}
+                    />
                     <Text
-                      style={{
-                        color: 'gray',
-                        fontSize: 14,
-                        textAlign: 'center',
-                        marginTop: 10,
-                        textTransform: 'capitalize',
-                      }}>
-                      Shipping charges according to distance
+                      style={{ color: 'black', fontSize: 18, paddingTop: 15 }}>
+                      {item.pro_name}
                     </Text>
-                    <Text
-                      style={{
-                        color: colors.ORANGE.DEFAULT,
-                        fontSize: 14,
-                        textAlign: 'center',
-                        marginTop: 10,
-                        textTransform: 'capitalize',
-                      }}>
-                      View Shipping Charges of vender
+                  </View>
+                  <Text
+                    style={{
+                      color: 'gray',
+                      fontSize: 14,
+                      textAlign: 'center',
+                      marginTop: 10,
+                      textTransform: 'capitalize',
+                    }}>
+                    Shipping charges according to distance
                     </Text>
-                    <Text
-                      style={{
-                        color: 'black',
-                        fontSize: 18,
-                        textAlign: 'center',
-                        marginTop: 10,
-                      }}>
-                      PKR {item.pro_price}
+                  <Text
+                    style={{
+                      color: colors.ORANGE.DEFAULT,
+                      fontSize: 14,
+                      textAlign: 'center',
+                      marginTop: 10,
+                      textTransform: 'capitalize',
+                    }}>
+                    View Shipping Charges of vender
                     </Text>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        borderWidth: 1,
-                        borderColor: 'lightgray',
-                        width: '30%',
-                        justifyContent: 'space-around',
-                        alignItems: 'center',
-                        paddingVertical: 8,
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        marginVertical: 10,
-                      }}>
-                      <TouchableOpacity>
-                        <Feather name="minus" />
-                      </TouchableOpacity>
-                      <Text>{item.qty}</Text>
-                      <TouchableOpacity>
-                        <Feather name="plus" />
-                      </TouchableOpacity>
-                    </View>
-                    {/* <Text
+                  <Text
+                    style={{
+                      color: 'black',
+                      fontSize: 18,
+                      textAlign: 'center',
+                      marginTop: 10,
+                    }}>
+                    PKR {item.pro_price}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      borderWidth: 1,
+                      borderColor: 'lightgray',
+                      width: '30%',
+                      justifyContent: 'space-around',
+                      alignItems: 'center',
+                      paddingVertical: 8,
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                      marginVertical: 10,
+                    }}>
+                    <TouchableOpacity>
+                      <Feather name="minus" />
+                    </TouchableOpacity>
+                    <Text>{item.qty}</Text>
+                    <TouchableOpacity>
+                      <Feather name="plus" />
+                    </TouchableOpacity>
+                  </View>
+                  {/* <Text
                       style={{
                         color: colors.ORANGE.DEFAULT,
                         fontSize: 18,
@@ -326,10 +323,10 @@ let Login = () => {
                       }}>
                       PKR 700
                     </Text> */}
-                  </View>
                 </View>
-              
-            )}
+              </View>)
+
+            }}
           />
         </View>
 
@@ -344,7 +341,7 @@ let Login = () => {
             marginTop: '2%',
             marginBottom: '10%',
           }}>
-          <View style={{width: '90%', marginTop: '7%'}}>
+          <View style={{ width: '90%', marginTop: '7%' }}>
             <Text
               onPress={() => TotalCart()}
               style={{
@@ -366,8 +363,8 @@ let Login = () => {
                 paddingBottom: 15,
                 borderBottomColor: 'lightgray',
               }}>
-              <Text style={{color: 'black', fontSize: 18}}>Subtotal :</Text>
-              <Text style={{color: 'black', fontSize: 18}}>{data.Data && totalPrice}</Text>
+              <Text style={{ color: 'black', fontSize: 18 }}>Subtotal :</Text>
+              <Text style={{ color: 'black', fontSize: 18 }}>{data.Data ? totalPrice : '0'}</Text>
             </View>
             <View
               style={{
@@ -375,36 +372,46 @@ let Login = () => {
                 justifyContent: 'space-between',
                 marginTop: 50,
               }}>
-              <Text style={{color: colors.ORANGE.DEFAULT, fontSize: 18}}>
+              <Text style={{ color: colors.ORANGE.DEFAULT, fontSize: 18 }}>
                 Total :
               </Text>
-              <Text style={{color: colors.ORANGE.DEFAULT, fontSize: 18}}>
+              <Text style={{ color: colors.ORANGE.DEFAULT, fontSize: 18 }}>
                 PKR {data.Data ? totalPrice : '0'}
               </Text>
             </View>
-{console.log('GGGGGGGGGGGGGGGGGGG',data.length)}
-            <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                borderColor: colors.ORANGE.DEFAULT,
-                padding: 10,
-                width: '100%',
-                marginTop: 20,
-              }}
-              onPress={() =>
-                navigation.navigate('CheckOut', {
-                  totall: totalPrice,
-                })
-              }>
-              <Text
+            {data.Data &&
+              <TouchableOpacity
                 style={{
-                  fontSize: 18,
-                  color: colors.ORANGE.DEFAULT,
-                  textAlign: 'center',
-                }}>
-                PROCEED TO CHECKOUT
-              </Text>
-            </TouchableOpacity>
+                  borderWidth: 1,
+                  borderColor: colors.ORANGE.DEFAULT,
+                  padding: 10,
+                  width: '100%',
+                  marginTop: 20,
+                }}
+                onPress={() => {
+                  AsyncStorage.getItem('userData').
+                    then(res => {
+                      if(res){
+                        navigation.navigate('CheckOut', {
+                          totall: totalPrice,
+                        })
+                      }else{
+                        navigation.navigate('login')
+                      }
+                    })
+                }
+                }>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: colors.ORANGE.DEFAULT,
+                    textAlign: 'center',
+                  }}>
+                  PROCEED TO CHECKOUT
+            </Text>
+              </TouchableOpacity>
+            }
+
           </View>
         </View>
         <Text

@@ -52,23 +52,7 @@ const RenderHeader = () => {
           />
         </TouchableOpacity>
         <Image source={images.logo} style={{height: 30, width: '30%'}} />
-        <Text
-          style={{
-            position: 'absolute',
-            right: '-1%',
-            top: '20%',
-            fontSize: 10,
-            backgroundColor: colors.ORANGE.DEFAULT,
-            borderRadius: 50,
-            zIndex: 12,
-            height: 18,
-            width: 18,
-            textAlign: 'center',
-            paddingTop: 2,
-            color: 'white',
-          }}>
-          23
-        </Text>
+        
         <TouchableOpacity
           style={{position: 'absolute', right: '3%'}}
           onPress={() => navigation.navigate('Cart')}>
@@ -112,7 +96,7 @@ let Login = ({route}) => {
       .then((response) => response.json())
       .then((json) => {
         setData(json);
-        console.log(data);
+        console.log('CHANGE psss',data);
         Alert.alert(json.result);
         setpwd('');
         setnewpwd('');
@@ -169,7 +153,7 @@ let Login = ({route}) => {
           }}>
           <View style={{width: '100%', marginTop: '4%'}}>
             <View style={styles.form}>
-              <Text>Enter Password </Text>
+              <Text>Old Password </Text>
               <TextInput
                 style={[styles.textb, {color: '#808080'}]}
                 placeholderTextColor={'#808080'}
@@ -178,7 +162,7 @@ let Login = ({route}) => {
                 value={pwd}
                 onChangeText={(text) => setpwd(text)}
               />
-              <Text>Confirm Password</Text>
+              <Text>New Password</Text>
               <TextInput
                 style={[styles.textb, {color: '#808080'}]}
                 placeholderTextColor={'#808080'}

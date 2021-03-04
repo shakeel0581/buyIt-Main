@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,12 +16,12 @@ import {
   Modal,
   TouchableHighlight,
 } from 'react-native';
-
-import {TextInput} from 'react-native-gesture-handler';
-import {CheckBox} from 'native-base';
-import {Icon} from 'react-native-elements';
-import {api} from './constant';
-function signup() {
+import { useNavigation, CommonActions } from '@react-navigation/native';
+import { TextInput } from 'react-native-gesture-handler';
+import { CheckBox } from 'native-base';
+import { Icon } from 'react-native-elements';
+import { api } from './constant';
+function signup(props) {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [name, setName] = useState('');
@@ -57,11 +57,15 @@ function signup() {
       .then((response) => response.json())
       .then((json) => {
         setData(json);
-        console.log(data);
-        Alert.alert(data.result);
-        setName('');
-        setPwd('');
-        setUsr('');
+        console.log(json.status);
+        Alert.alert(json.result);
+        if (json.status == '200') {
+          props.navigation.goBack();
+          setName('');
+          setPwd('');
+          setUsr('');
+          
+        }
       })
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
@@ -72,7 +76,7 @@ function signup() {
       <View style={styles.form}>
         <Text>Your Name *</Text>
         <TextInput
-          style={[styles.textb, {color: '#808080'}]}
+          style={[styles.textb, { color: '#808080' }]}
           placeholder={'Name'}
           placeholderTextColor={'#808080'}
           autoCapitilize={false}
@@ -81,7 +85,7 @@ function signup() {
         />
         <Text>Your Email Address *</Text>
         <TextInput
-          style={[styles.textb, {color: '#808080'}]}
+          style={[styles.textb, { color: '#808080' }]}
           placeholder={'Email'}
           placeholderTextColor={'#808080'}
           autoCapitilize={false}
@@ -90,7 +94,7 @@ function signup() {
         />
         <Text>Password *</Text>
         <TextInput
-          style={[styles.textb, {color: '#808080'}]}
+          style={[styles.textb, { color: '#808080' }]}
           placeholder={'Password'}
           placeholderTextColor={'#808080'}
           autoCapitilize={false}
@@ -101,13 +105,13 @@ function signup() {
 
         <View style={styles.chck}>
           <CheckBox color="#d3d3d3" backgroundColor="#d3d3d3" />
-          <Text style={{paddingLeft: 15}}>I agree to the </Text>
-          <Text style={{textDecorationLine: 'underline'}}>
+          <Text style={{ paddingLeft: 15 }}>I agree to the </Text>
+          <Text style={{ textDecorationLine: 'underline' }}>
             privacy policy *
           </Text>
         </View>
         <TouchableOpacity style={styles.login} onPress={handleSignupTap}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Text style={styles.btns}>SIGN UP</Text>
             <Icon
               name="arrow-right"
@@ -125,8 +129,8 @@ function signup() {
             marginBottom: 20,
           }}
         />
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Text style={{color: '#808080', padding: 15}}> or sign in with </Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <Text style={{ color: '#808080', padding: 15 }}> or sign in with </Text>
         </View>
 
         <TouchableOpacity
@@ -141,7 +145,7 @@ function signup() {
           onPress={() => {
             Alert.alert('login With Facebook');
           }}>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="facebook-f"
               type="font-awesome"
@@ -157,8 +161,8 @@ function signup() {
 }
 
 const styles = StyleSheet.create({
-  container: {marginTop: '7%'},
-  text: {fontSize: 20, fontWeight: 'bold', color: 'white'},
+  container: { marginTop: '7%' },
+  text: { fontSize: 20, fontWeight: 'bold', color: 'white' },
   containerr: {
     flex: 1,
     alignItems: 'center',

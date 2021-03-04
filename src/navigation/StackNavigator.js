@@ -14,7 +14,7 @@ import {
 
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, CommonActions} from '@react-navigation/native';
 // import {TextInput} from 'react-native-gesture-handler';
 import {CheckBox,Icon} from 'native-base';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -56,7 +56,7 @@ import {api} from '../components/constant';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const initialLayout = {width: Dimensions.get('window').width};
-const RandomNumber = Math.floor(Math.random() * 10000000) + 1 ;
+const RandomNumber = Math.floor(Math.random() * 100000000) + 1 ;
   
 
 
@@ -139,6 +139,21 @@ const App = () => {
   }
 
   function Menu() {
+    const [userData, setUserData] = useState('');
+    useEffect(() => {
+      AsyncStorage.getItem('userData').
+          then(res => {
+            setUserData(res);
+          })
+      navigation.addListener('focus', () => {
+        AsyncStorage.getItem('userData').
+          then(res => {
+            setUserData(res);
+          })
+      })
+    })
+
+    console.log('CURRENT USER', userData)
     //console.log(navigation);
     //console.log(props.navigation);
     //let navigation = useNavigation();
@@ -158,7 +173,7 @@ const App = () => {
           </TouchableOpacity>
         </View>
         <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
-          <TouchableOpacity onPress={() => navigation.navigate('Allproduct')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Allproduct',{SHOP_ID: null,V_Name: ''})}>
             <Text style={{color: '#adadad', padding: 10}}>SHOP</Text>
           </TouchableOpacity>
         </View>
@@ -174,11 +189,37 @@ const App = () => {
           </TouchableOpacity>
         </View>
    
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
-          <TouchableOpacity onPress={() => navigation.navigate('login')}>
-            <Text style={{color: '#adadad', padding: 10}}>LOGIN</Text>
-          </TouchableOpacity>
-        </View>
+        {!userData ?
+          <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+            <TouchableOpacity onPress={() => navigation.navigate('login')}>
+              <Text style={{ color: '#adadad', padding: 10 }}>LOGIN</Text>
+            </TouchableOpacity>
+          </View>
+          :
+          <>
+            <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+              <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
+                <Text style={{ color: '#adadad', padding: 10 }}>Profile</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+              <TouchableOpacity onPress={() => {
+                AsyncStorage.removeItem('userData');
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1,
+                    routes: [
+                      { name: 'HomeScreen' }
+                    ],
+                  })
+                )
+              }
+              }>
+                <Text style={{ color: '#adadad', padding: 10 }}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        }
         <View style={{margin: 10, flexDirection: 'row', alignSelf:'center' }}>
           <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1, width: 28, alignItems:'center', margin: 5, borderRadius:30, padding: 5}}>
           <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
@@ -306,11 +347,11 @@ const App = () => {
             component={StackScreens}
             options={options}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
           name="userNav"
           component={usernav}
           options={options}
-          />
+          /> */}
            
           <Stack.Screen
            name="Signup"

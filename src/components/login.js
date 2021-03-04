@@ -1,5 +1,4 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {useNavigation} from '@react-navigation/native';
 import {
   StyleSheet,
   ScrollView,
@@ -9,7 +8,7 @@ import {
   Alert,
 
 } from 'react-native';
-
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import {TextInput} from 'react-native-gesture-handler';
 import {CheckBox} from 'native-base';
 import {Icon} from 'react-native-elements';
@@ -46,58 +45,42 @@ function login() {
 
     const uri = api.login + 'email=' + usr + '&password=' + pwd;
     console.log(uri);
-    // fetch(uri)
-    //   .then((response) => {
-    //     response.json();
-    //     //setIsLoading(true);
-    //   })
-    //   .then((json) => {
-    //     console.log('login', json);
-    //  AsyncStorage.setItem('userData', json.Data[0].user_id);
-    //  AsyncStorage.setItem('userId', json.Data[0].user_id).then(() =>
-    //     AsyncStorage.getItem('userId').then((result) => console.log(result)),
-    // );
-    //     // console.log();
-    //     // setData(json);
-    //     // setIsLoading(false);
-    //     setUsr('');
-    //     setPwd('');
-    //     // Alert.alert(data.result);
-    //   })
-    //   .catch((error) => console.error(error))
-    //   .finally(() => setLoading(false));
     fetch(uri)
       .then((response) => response.json())
       .then((json) => {
         console.log('login', json);
-        //console.log('login', json);
         setPop(json.result);
-
-        //console.log('check' + pop);
         setInfo(json);
-        //Alert.alert(pop);
-
-        //console.log(userInfo);
-        Alert.alert("successfully logged in");
-        navigation.navigate('userNav');
+        
         setloader(false);
-        AsyncStorage.setItem('userData', JSON.stringify(json.Data[0])).then(
-          () =>
-            AsyncStorage.getItem('userData').then((result) => {
-              // console.log(result);
-              
+        Alert.alert(json.result);
+        if(json.status == '200'){
+        console.log(json.status)
 
-              let user = JSON.parse(result);
+          AsyncStorage.setItem('userData', JSON.stringify(json.Data[0])).
+          then(res => {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 1,
+                routes: [
+                  { name: 'HomeScreen' }
+                ],
+              })
+            )
+          })
+        }
+        // console.log(json.Data[0])
+        // console.log(json.status)
+        // console.log()
+        // AsyncStorage.setItem('userData', JSON.stringify(json.Data[0])).then(
+        //   () =>
+        //     AsyncStorage.getItem('userData').then((result) => {
+        //       let user = JSON.parse(result);
+        //     }),
+        // );
 
-              // console.log(user.user_id);
-            }),
-        );
-
-        setUsr('');
-        setPwd('');
-
-        //
-        //console.log(data.result);
+        // setUsr('');
+        // setPwd('');
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));

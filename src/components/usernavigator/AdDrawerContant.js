@@ -1,14 +1,13 @@
-import React, {useEffect, useState, useRef} from 'react';
-import {View, StyleSheet, TouchableOpacity,
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  View, StyleSheet, TouchableOpacity,
   ScrollView,
- 
-
   FlatList,
-
   Dimensions,
   TextInput,
   Alert,
-  ActivityIndicator,} from 'react-native';
+  ActivityIndicator,
+} from 'react-native';
 import {
   useTheme,
   Avatar,
@@ -20,20 +19,21 @@ import {
   List,
   Switch,
 } from 'react-native-paper';
-import {useNavigation, CommonActions } from '@react-navigation/native';
-import {CheckBox,Icon} from 'native-base';
+import { useNavigation, CommonActions } from '@react-navigation/native';
+import { CheckBox, Icon } from 'native-base';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
+import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 import Loader from '../Loader';
-import {api} from '../constant'
+import { api } from '../constant'
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 export default function DrawerContent(props) {
- 
-  const initialLayout = {width: Dimensions.get('window').width};
+
+  const initialLayout = { width: Dimensions.get('window').width };
   const [loader, setloader] = React.useState(false);
   const renderTabBar = (props) => {
     return (
@@ -45,13 +45,13 @@ export default function DrawerContent(props) {
           borderBottomWidth: 1,
           height: 50,
         }}
-        labelStyle={{color: '#fff', fontSize: 18, fontWeight: 'bold'}}
+        labelStyle={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}
         {...props}
-        indicatorStyle={{backgroundColor: '#e6b830', height: 2.5}}
+        indicatorStyle={{ backgroundColor: '#e6b830', height: 2.5 }}
       />
     );
   };
-  
+
   function Menu() {
     //console.log(navigation);
     //console.log(props.navigation);
@@ -62,61 +62,92 @@ export default function DrawerContent(props) {
     // const refRBSheetBottom = useRef();
     const refRBSheetBottom = useRef();
     const [refRBSheet, setrefRBSheet] = useState(refRBSheetBottom);
+    const [userData, setUserData] = useState('');
+
+    useEffect(() => {
+      AsyncStorage.getItem('userData').
+          then(res => {
+            setUserData(res);
+          })
+      navigation.addListener('focus', () => {
+        AsyncStorage.getItem('userData').
+          then(res => {
+            console.log('FFFFFFFFFFFFRRRRRRRRRRRRRRRRRR',res);
+          })
+      })
+    })
+
+    console.log('USER DATA',userData)
 
     return (
       <ScrollView>
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('HomeScreen2', {ch: check})}>
-            <Text style={{color: '#adadad', padding: 10}}>HOME</Text>
+            onPress={() => navigation.navigate('HomeScreen2', { ch: check })}>
+            <Text style={{ color: '#adadad', padding: 10 }}>HOME</Text>
           </TouchableOpacity>
         </View>
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
           <TouchableOpacity onPress={() => navigation.navigate('ShopScreen')}>
-            <Text style={{color: '#adadad', padding: 10}}>SHOP</Text>
+            <Text style={{ color: '#adadad', padding: 10 }}>SHOP</Text>
           </TouchableOpacity>
         </View>
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
-            <Text style={{color: '#adadad', padding: 10}}>CART</Text>
+            <Text style={{ color: '#adadad', padding: 10 }}>CART</Text>
           </TouchableOpacity>
         </View>
-      
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
           <TouchableOpacity onPress={() => navigation.navigate('WishList')}>
-            <Text style={{color: '#adadad', padding: 10}}>WISHLIST</Text>
+            <Text style={{ color: '#adadad', padding: 10 }}>WISHLIST</Text>
           </TouchableOpacity>
         </View>
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
-          <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
-            <Text style={{color: '#adadad', padding: 10}}>Profile</Text>
+        {!userData ?
+          <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+            <TouchableOpacity onPress={() => navigation.navigate('login')}>
+              <Text style={{ color: '#adadad', padding: 10 }}>LOGIN</Text>
+            </TouchableOpacity>
+          </View>
+          :
+          <>
+            <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+              <TouchableOpacity onPress={() => navigation.navigate('MyProfile')}>
+                <Text style={{ color: '#adadad', padding: 10 }}>Profile</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+              <TouchableOpacity onPress={() => {
+                AsyncStorage.removeItem('userData');
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1,
+                    routes: [
+                      { name: 'userNav' }
+                    ],
+                  })
+                )
+              }
+              }>
+                <Text style={{ color: '#adadad', padding: 10 }}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        }
+
+
+        <View style={{ margin: 10, flexDirection: 'row', alignSelf: 'center' }}>
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, width: 28, alignItems: 'center', margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
           </TouchableOpacity>
-        </View>
-   
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
-          <TouchableOpacity onPress={() => navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [
-          { name: 'HomeScreen' }
-        ],
-      })
-    )}>
-            <Text style={{color: '#adadad', padding: 10}}>Logout</Text>
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} active name="twitter" type="FontAwesome" />
           </TouchableOpacity>
-        </View>
-        <View style={{margin: 10, flexDirection: 'row', alignSelf:'center' }}>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1, width: 28, alignItems:'center', margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }}  active name="twitter" type="FontAwesome" />
-          </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
-          </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1, margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -124,8 +155,8 @@ export default function DrawerContent(props) {
   }
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'first', title: 'MENU'},
-    {key: 'second', title: 'CATEGORIES'},
+    { key: 'first', title: 'MENU' },
+    { key: 'second', title: 'CATEGORIES' },
   ]);
 
   const renderScene = SceneMap({
@@ -153,65 +184,65 @@ export default function DrawerContent(props) {
     let navigation = useNavigation();
     if (ifLoading) {
       return (
-        <View style={{paddingTop: 100}}>
+        <View style={{ paddingTop: 100 }}>
           <ActivityIndicator size="large" color="white" />
         </View>
       );
     }
     return (
-      <View style={{flex: 1, padding: 24}}>
+      <View style={{ flex: 1, padding: 24 }}>
         {isLoading ? (
           <Text>Loading...</Text>
         ) : (
-          <View>
-            <FlatList
-              data={data.Data}
-              keyExtractor={({cat_id}, index) => cat_id}
-              renderItem={({item}) => (
-                <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('CategoriesList', {id: item.cat_id})
-                    }>
+            <View>
+              <FlatList
+                data={data.Data}
+                keyExtractor={({ cat_id }, index) => cat_id}
+                renderItem={({ item }) => (
+                  <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('CategoriesList', { id: item.cat_id })
+                      }>
 
-                    <Text style={{color: 'white', padding: 10}}>
-                      {item.cat_name}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-          </View>
-        )}
-          <View style={{margin: 10, flexDirection: 'row', alignSelf:'center' }}>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1, width: 28, alignItems:'center', margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
+                      <Text style={{ color: 'white', padding: 10 }}>
+                        {item.cat_name}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+            </View>
+          )}
+        <View style={{ margin: 10, flexDirection: 'row', alignSelf: 'center' }}>
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, width: 28, alignItems: 'center', margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }}  active name="twitter" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} active name="twitter" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1, margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
           </TouchableOpacity>
         </View>
       </View>
     );
   }
- 
-  
+
+
 
   return (
-    <View style={{flex: 1}}>
-           <DrawerContentScrollView {...props} style={{backgroundColor: 'black'}}>
-        <View style={{alignItems: 'flex-end', padding: 20}}>
+    <View style={{ flex: 1 }}>
+      <DrawerContentScrollView {...props} style={{ backgroundColor: 'black' }}>
+        <View style={{ alignItems: 'flex-end', padding: 20 }}>
           <TouchableOpacity>
             <Entypo
               name="cross"
               size={30}
-              style={{color: 'grey'}}
+              style={{ color: 'grey' }}
               //onPress={() => props.navigation.navigate('HomeScreen')}
               onPress={() => props.navigation.closeDrawer()}
             />
@@ -221,16 +252,15 @@ export default function DrawerContent(props) {
           <View style={styles.inputsrch}>
             <TextInput style={styles.inputsearch} placeholderTextColor={'#adadad'} placeholder='Search in....' />
           </View>
-
           <View style={styles.inputbtn}>
-            <TouchableOpacity style={{alignItems:'center', justifyContent:'center' , flex:1}}>
-            <Icon style={{color:'#fff', fontSize: 25 }} active name="search1" type="AntDesign" />
+            <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+              <Icon style={{ color: '#fff', fontSize: 25 }} active name="search1" type="AntDesign" />
             </TouchableOpacity>
           </View>
         </View>
         <View>
           <TabView
-            navigationState={{index, routes}}
+            navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
             initialLayout={initialLayout}
