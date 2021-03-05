@@ -40,7 +40,7 @@ const initialLayoutHeight = { width: Dimensions.get('window').height };
 
 console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
 
-const Header = ({count}) => {
+const Header = ({ count }) => {
   const refRBSheetBottom = useRef();
   const [modalVisible, setModalVisible] = useState(false);
   let navigation = useNavigation();
@@ -196,12 +196,12 @@ const Shops = () => {
           keyExtractor={({ vendor_id }, val) => Math.floor(Math.random() * 10000000) + vendor_id}
           renderItem={({ item }) => (
 
-            <TouchableOpacity 
-            onPress={() => navigation.navigate('Allproduct', {SHOP_ID: item.vendor_id,V_Name:item.vendor_company_name})}
-             style={{
-              paddingLeft: 25,
-              height: 70, alignItems: 'center',
-            }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Allproduct', { SHOP_ID: item.vendor_id, V_Name: item.vendor_company_name })}
+              style={{
+                paddingLeft: 25,
+                height: 70, alignItems: 'center',
+              }}>
 
               <Image
                 source={{ uri: "https://thecodeditors.com/test/multi_vendor/vendor_images/" + item.vendor_logo }}
@@ -218,7 +218,7 @@ const Shops = () => {
     </View>
   );
 };
-const Recents = ({countPrss}) => {
+const Recents = ({ countPrss, userID }) => {
   let navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
@@ -263,10 +263,10 @@ const Recents = ({countPrss}) => {
               AsyncStorage.getItem('RandomNumber').then((result) => {
                 let user = JSON.parse(result);
                 const uri =
-                  api.addcart +user+
+                  api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1';
+                  '&quantity=1&user_id='+userID;
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -323,7 +323,7 @@ const Recents = ({countPrss}) => {
                     marginLeft: 20,
                     marginRight: 20,
                   }}
-                  onPress={() => {AddToCart();countPrss();}}>
+                  onPress={() => { AddToCart(); countPrss(); }}>
                   <Text
                     style={{
                       fontSize: 18,
@@ -422,7 +422,7 @@ const Slider = () => {
   );
 };
 
-const FeaturedSlider = ({countPrss}) => {
+const FeaturedSlider = ({ countPrss,userID }) => {
   let navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
@@ -478,10 +478,10 @@ const FeaturedSlider = ({countPrss}) => {
               AsyncStorage.getItem('RandomNumber').then((result) => {
                 let user = JSON.parse(result);
                 const uri =
-                  api.addcart +user+
+                  api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1';
+                  '&quantity=1&user_id='+userID;
                 fetch(uri)
                   .then((response) => response.json())
                   .then((json) => {
@@ -555,7 +555,7 @@ const FeaturedSlider = ({countPrss}) => {
     </View>
   );
 };
-const BestSeller = ({countPrss}) => {
+const BestSeller = ({ countPrss,userID }) => {
   let navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
@@ -612,10 +612,10 @@ const BestSeller = ({countPrss}) => {
                 console.log('result' + result);
                 let user = JSON.parse(result);
                 const uri =
-                  api.addcart +user+
+                  api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1';
+                  '&quantity=1&user_id='+userID;;
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -691,7 +691,7 @@ const BestSeller = ({countPrss}) => {
   );
 };
 
-const RecommenderSlider = ({countPrss}) => {
+const RecommenderSlider = ({ countPrss, userID }) => {
   let navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
@@ -745,10 +745,10 @@ const RecommenderSlider = ({countPrss}) => {
                 console.log('result' + result);
                 let user = JSON.parse(result);
                 const uri =
-                  api.addcart +user+
+                  api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1';
+                  '&quantity=1&user_id='+userID;;
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -829,20 +829,27 @@ const App = () => {
   let navigation = useNavigation();
   //const {ch} = route.params;
   const [coutn, setCount] = useState(0);
+  const [UserID, setUserID] = useState('');
   const screenHeight = Dimensions.get('window').height;
   useEffect(() => {
     AsyncStorage.getItem('RandomNumber').then((result) => {
-    let Rnumber = JSON.parse(result);
-          const uri = api.cartshow + Rnumber
-          fetch(uri)
-            .then((response) => response.json())
-            .then((json) => {
-              if(json.Data){
-                setCount(json.Data.length);
-              }
-            })
-            .catch((error) => console.error(error))
+      AsyncStorage.getItem('userData').then((user) => {
+        if(user){
+          const userData = JSON.parse(user);
+          setUserID(userData.user_id);
+        }
+        let Rnumber = JSON.parse(result);
+        const uri = api.cartshow + Rnumber
+        fetch(uri)
+          .then((response) => response.json())
+          .then((json) => {
+            if (json.Data) {
+              setCount(json.Data.length);
+            }
           })
+          .catch((error) => console.error(error))
+      })
+    })
   })
   return (
     <>
@@ -859,20 +866,20 @@ const App = () => {
             <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 10, marginLeft: 10, color: '#5b5e5c' }}>
               Special offer
           </Text>
-            <FeaturedSlider countPrss={()=>setCount(coutn+1)}/>
+            <FeaturedSlider countPrss={() => setCount(coutn + 1)} userID={UserID} />
 
             <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 10, marginLeft: 10, color: '#5b5e5c' }}>
               Recommended Products
           </Text>
-            <RecommenderSlider countPrss={()=>setCount(coutn+1)} />
+            <RecommenderSlider countPrss={() => setCount(coutn + 1)} userID={UserID} />
             <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 10, marginLeft: 10, color: '#5b5e5c' }}>
               Best Seller
           </Text>
-            <BestSeller countPrss={()=>setCount(coutn+1)} />
+            <BestSeller countPrss={() => setCount(coutn + 1)} userID={UserID} />
             <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 10, marginLeft: 10, color: '#5b5e5c' }}>
               Recents Products
           </Text>
-            <Recents countPrss={()=>setCount(coutn+1)} />
+            <Recents countPrss={() => setCount(coutn + 1)} userID={UserID} />
 
             <TouchableOpacity
               style={{
@@ -884,7 +891,7 @@ const App = () => {
                 marginLeft: 20,
                 marginRight: 20,
               }}
-              onPress={() => navigation.navigate('Allproduct', {SHOP_ID: null,V_Name: ''})}
+              onPress={() => navigation.navigate('Allproduct', { SHOP_ID: null, V_Name: '' })}
             >
               <Text
                 style={{
@@ -1007,9 +1014,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
-  img:{
-    height:150,
-    width:(Dimensions.get('window').width/2)
+  img: {
+    height: 150,
+    width: (Dimensions.get('window').width / 2)
   }
 });
 
