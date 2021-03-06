@@ -266,7 +266,7 @@ const Recents = ({ countPrss, userID }) => {
                   api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id='+userID;
+                  '&quantity=1&user_id=' + userID;
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -422,7 +422,7 @@ const Slider = () => {
   );
 };
 
-const FeaturedSlider = ({ countPrss,userID }) => {
+const FeaturedSlider = ({ countPrss, userID }) => {
   let navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
@@ -481,7 +481,7 @@ const FeaturedSlider = ({ countPrss,userID }) => {
                   api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id='+userID;
+                  '&quantity=1&user_id=' + userID;
                 fetch(uri)
                   .then((response) => response.json())
                   .then((json) => {
@@ -555,7 +555,7 @@ const FeaturedSlider = ({ countPrss,userID }) => {
     </View>
   );
 };
-const BestSeller = ({ countPrss,userID }) => {
+const BestSeller = ({ countPrss, userID }) => {
   let navigation = useNavigation();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
@@ -615,7 +615,7 @@ const BestSeller = ({ countPrss,userID }) => {
                   api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id='+userID;;
+                  '&quantity=1&user_id=' + userID;;
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -748,7 +748,7 @@ const RecommenderSlider = ({ countPrss, userID }) => {
                   api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id='+userID;;
+                  '&quantity=1&user_id=' + userID;;
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
@@ -834,7 +834,7 @@ const App = () => {
   useEffect(() => {
     AsyncStorage.getItem('RandomNumber').then((result) => {
       AsyncStorage.getItem('userData').then((user) => {
-        if(user){
+        if (user) {
           const userData = JSON.parse(user);
           setUserID(userData.user_id);
         }
@@ -848,9 +848,30 @@ const App = () => {
             }
           })
           .catch((error) => console.error(error))
-      })
+      });
+    });
+
+    navigation.addListener('focus', () => {
+      AsyncStorage.getItem('RandomNumber').then((result) => {
+        AsyncStorage.getItem('userData').then((user) => {
+          if (user) {
+            const userData = JSON.parse(user);
+            setUserID(userData.user_id);
+          }
+          let Rnumber = JSON.parse(result);
+          const uri = api.cartshow + Rnumber
+          fetch(uri)
+            .then((response) => response.json())
+            .then((json) => {
+              if (json.Data) {
+                setCount(json.Data.length);
+              }
+            })
+            .catch((error) => console.error(error))
+        });
+      });
     })
-  })
+  }, [])
   return (
     <>
       <StatusBar barStyle="dark-content" />

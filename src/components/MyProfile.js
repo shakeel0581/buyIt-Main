@@ -323,7 +323,7 @@ let Login = () => {
                 },
                 {
                   label: 'My Orders',
-                  function: () => navigation.navigate('CheckStatus'),
+                  function: () => navigation.navigate('Order2'),
                 },
                 {
                   label: 'Change Password',

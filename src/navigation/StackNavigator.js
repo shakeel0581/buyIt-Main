@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -13,15 +13,17 @@ import {
   ActivityIndicator,
 
 } from 'react-native';
+import { Icon as TbIcon } from 'react-native-elements';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-community/async-storage';
-import {useNavigation, CommonActions} from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 // import {TextInput} from 'react-native-gesture-handler';
-import {CheckBox,Icon} from 'native-base';
+import { CheckBox, Icon } from 'native-base';
 import Entypo from 'react-native-vector-icons/Entypo';
 import BottomAccount from '../components/BottomAccount';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -40,8 +42,8 @@ import ChangePassword from '../components/ChangePassword';
 import Cart from '../components/Cart';
 import OrderDetails from '../components/OrderDetails';
 import tabsview from '../components/tabsview';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import CategoriesList from '../components/CategoriesList';
 import ProductDetails from '../components/ProductDetails';
 import CategoriesProductList from '../components/CategoriesProductList';
@@ -49,25 +51,25 @@ import CheckOut from '../components/CheckOut';
 import login from '../components/login';
 import Signup from '../components/signup'
 import usernav from '../components/usernavigator/AdDrawerNavigator'
-import Allproduct from '../components/Allproduct'
+import Allproduct from '../components/Allproduct';
+import Dashboard from '../components/dashboard';
+import Order2 from '../components/order';
 
-import {api} from '../components/constant';
+import { api } from '../components/constant';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const initialLayout = {width: Dimensions.get('window').width};
-const RandomNumber = Math.floor(Math.random() * 100000000) + 1 ;
-  
-
+const initialLayout = { width: Dimensions.get('window').width };
+const RandomNumber = Math.floor(Math.random() * 100000000) + 1;
 
 const App = () => {
-  React.useEffect( () => {
+  React.useEffect(() => {
     AsyncStorage.getItem('RandomNumber').
-    then(res => {
-      if (res == null) {
-        AsyncStorage.setItem('RandomNumber', JSON.stringify(RandomNumber));
-      }
-    })
+      then(res => {
+        if (res == null) {
+          AsyncStorage.setItem('RandomNumber', JSON.stringify(RandomNumber));
+        }
+      })
   })
   let options = {
     headerShown: false,
@@ -93,21 +95,21 @@ const App = () => {
             borderBottomWidth: 1,
             height: 50,
           }}
-          labelStyle={{color: '#fff', fontSize: 18, fontWeight: 'bold'}}
+          labelStyle={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}
           {...props}
-          indicatorStyle={{backgroundColor: '#e6b830', height: 2.5}}
+          indicatorStyle={{ backgroundColor: '#e6b830', height: 2.5 }}
         />
       );
     };
     //console.log(props.navigation);
     return (
-      <DrawerContentScrollView {...props} style={{backgroundColor: 'black'}}>
-        <View style={{alignItems: 'flex-end', padding: 20}}>
+      <DrawerContentScrollView {...props} style={{ backgroundColor: 'black' }}>
+        <View style={{ alignItems: 'flex-end', padding: 20 }}>
           <TouchableOpacity>
             <Entypo
               name="cross"
               size={30}
-              style={{color: 'grey'}}
+              style={{ color: 'grey' }}
               //onPress={() => props.navigation.navigate('HomeScreen')}
               onPress={() => props.navigation.closeDrawer()}
             />
@@ -119,14 +121,14 @@ const App = () => {
           </View>
 
           <View style={styles.inputbtn}>
-            <TouchableOpacity style={{alignItems:'center', justifyContent:'center' , flex:1}}>
-            <Icon style={{color:'#fff', fontSize: 25 }} active name="search1" type="AntDesign" />
+            <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+              <Icon style={{ color: '#fff', fontSize: 25 }} active name="search1" type="AntDesign" />
             </TouchableOpacity>
           </View>
         </View>
         <View>
           <TabView
-            navigationState={{index, routes}}
+            navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
             initialLayout={initialLayout}
@@ -142,9 +144,9 @@ const App = () => {
     const [userData, setUserData] = useState('');
     useEffect(() => {
       AsyncStorage.getItem('userData').
-          then(res => {
-            setUserData(res);
-          })
+        then(res => {
+          setUserData(res);
+        })
       navigation.addListener('focus', () => {
         AsyncStorage.getItem('userData').
           then(res => {
@@ -166,29 +168,36 @@ const App = () => {
 
     return (
       <ScrollView>
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+        { userData ? <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Tabs')}>
+            <Text style={{ color: '#adadad', padding: 10 }}>Dashboard</Text>
+          </TouchableOpacity>
+        </View> : <></>}
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('HomeScreen2', {ch: check})}>
-            <Text style={{color: '#adadad', padding: 10}}>HOME</Text>
+            onPress={() => navigation.navigate('HomeScreen2', { ch: check })}>
+            <Text style={{ color: '#adadad', padding: 10 }}>HOME</Text>
           </TouchableOpacity>
         </View>
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
-          <TouchableOpacity onPress={() => navigation.navigate('Allproduct',{SHOP_ID: null,V_Name: ''})}>
-            <Text style={{color: '#adadad', padding: 10}}>SHOP</Text>
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Allproduct', { SHOP_ID: null, V_Name: '' })}>
+            <Text style={{ color: '#adadad', padding: 10 }}>SHOP</Text>
           </TouchableOpacity>
         </View>
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
-            <Text style={{color: '#adadad', padding: 10}}>CART</Text>
+            <Text style={{ color: '#adadad', padding: 10 }}>CART</Text>
           </TouchableOpacity>
         </View>
-      
-        <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+
+        <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
           <TouchableOpacity onPress={() => navigation.navigate('WishList')}>
-            <Text style={{color: '#adadad', padding: 10}}>WISHLIST</Text>
+            <Text style={{ color: '#adadad', padding: 10 }}>WISHLIST</Text>
           </TouchableOpacity>
         </View>
-   
+
+
+
         {!userData ?
           <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
             <TouchableOpacity onPress={() => navigation.navigate('login')}>
@@ -220,18 +229,18 @@ const App = () => {
             </View>
           </>
         }
-        <View style={{margin: 10, flexDirection: 'row', alignSelf:'center' }}>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1, width: 28, alignItems:'center', margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
+        <View style={{ margin: 10, flexDirection: 'row', alignSelf: 'center' }}>
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, width: 28, alignItems: 'center', margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }}  active name="twitter" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} active name="twitter" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1, margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -258,29 +267,29 @@ const App = () => {
     let navigation = useNavigation();
     if (ifLoading) {
       return (
-        <View style={{paddingTop: 100}}>
+        <View style={{ paddingTop: 100 }}>
           <ActivityIndicator size="large" color="white" />
         </View>
       );
     }
     return (
-      <View style={{flex: 1, padding: 24}}>
+      <View style={{ flex: 1, padding: 24 }}>
         {isLoading ? (
           <Text>Loading...</Text>
         ) : (
           <View>
             <FlatList
               data={data.Data}
-              keyExtractor={({cat_id}, index) => cat_id}
-              renderItem={({item}) => (
-                <View style={{borderBottomWidth: 1, borderBottomColor: 'grey'}}>
+              keyExtractor={({ cat_id }, index) => cat_id}
+              renderItem={({ item }) => (
+                <View style={{ borderBottomWidth: 1, borderBottomColor: 'grey' }}>
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate('CategoriesList', {id: item.cat_id})
+                      navigation.navigate('CategoriesList', { id: item.cat_id })
                     }>
-                      
 
-                    <Text style={{color: 'white', padding: 10}}>
+
+                    <Text style={{ color: 'white', padding: 10 }}>
                       {item.cat_name}
                     </Text>
                   </TouchableOpacity>
@@ -289,18 +298,18 @@ const App = () => {
             />
           </View>
         )}
-          <View style={{margin: 10, flexDirection: 'row', alignSelf:'center' }}>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1, width: 28, alignItems:'center', margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
+        <View style={{ margin: 10, flexDirection: 'row', alignSelf: 'center' }}>
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, width: 28, alignItems: 'center', margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="facebook" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad', borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }}  active name="twitter" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} active name="twitter" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1,  margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="instagram" type="FontAwesome" />
           </TouchableOpacity>
-          <TouchableOpacity style={{borderColor:'#adadad',  borderWidth: 1, margin: 5, borderRadius:30, padding: 5}}>
-          <Icon style={{color:'#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
+          <TouchableOpacity style={{ borderColor: '#adadad', borderWidth: 1, margin: 5, borderRadius: 30, padding: 5 }}>
+            <Icon style={{ color: '#adadad', fontSize: 18 }} size={12} active name="youtube-play" type="FontAwesome" />
           </TouchableOpacity>
         </View>
       </View>
@@ -309,8 +318,8 @@ const App = () => {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'first', title: 'MENU'},
-    {key: 'second', title: 'CATEGORIES'},
+    { key: 'first', title: 'MENU' },
+    { key: 'second', title: 'CATEGORIES' },
   ]);
 
   const renderScene = SceneMap({
@@ -337,6 +346,58 @@ const App = () => {
       </Drawer.Navigator>
     );
   }
+
+  const TABS = () => {
+    const tabsBAr = createBottomTabNavigator();
+    return (
+      <tabsBAr.Navigator
+        initialRouteName="Home2"
+        tabBarOptions={{
+          activeTintColor: '#e91e63',
+        }}>
+        <tabsBAr.Screen
+          name="Home2"
+          component={Dashboard}
+          options={{
+            tabBarLabel: () => {
+              return (
+                <Text
+                  style={{
+                    backgroundColor: 'black',
+                    width: '120%',
+                    color: 'white',
+                    textAlign: 'center',
+                    fontSize: 14,
+                  }}>
+                  Go to Home
+                </Text>
+              );
+            },
+            tabBarIcon: ({ color, size }) => (
+              <View
+                style={{
+                  backgroundColor: 'black',
+                  height: '120%',
+                  width: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <TbIcon
+                  name="home"
+                  type="font-awesome"
+                  size={35}
+                  color="white"
+                />
+              </View>
+
+            ),
+          }}
+        />
+      </tabsBAr.Navigator>
+    )
+  }
+
   return (
     <>
       <NavigationContainer>
@@ -347,17 +408,22 @@ const App = () => {
             component={StackScreens}
             options={options}
           />
-          {/* <Stack.Screen
-          name="userNav"
-          component={usernav}
-          options={options}
-          /> */}
-           
           <Stack.Screen
-           name="Signup"
-           component={Signup}
-           options={options}
-           />
+            name="Tabs"
+            component={TABS}
+            options={options}
+          />
+
+          <Stack.Screen
+            name="Signup"
+            component={Signup}
+            options={options}
+          />
+          <Stack.Screen
+            name="Order2"
+            component={Order2}
+            options={options}
+          />
           <Stack.Screen
             name="CheckOrder"
             component={CheckOrders}
@@ -389,19 +455,14 @@ const App = () => {
             component={ChangePassword}
             options={options}
           />
-          
-          <Stack.Screen
-            name="OrderDetails"
-            component={OrderDetails}
-            options={options}
-          />
+
           <Stack.Screen
             name="tabsview"
             component={tabsview}
             options={options}
           />
           <Stack.Screen
-            name="CheckOrders"
+            name="OrderDetails"
             component={CheckOrders}
             options={options}
           />
@@ -411,15 +472,15 @@ const App = () => {
             options={options}
           />
           <Stack.Screen
-          name="Allproduct"
-          component={Allproduct}
-          options={options}
+            name="Allproduct"
+            component={Allproduct}
+            options={options}
           />
-           <Stack.Screen
+          <Stack.Screen
             name="ProductDetails"
             component={ProductDetails}
             options={options}
-          /> 
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>

@@ -9,9 +9,9 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 
-const RenderHeader = () => {
+const RenderHeader = (props) => {
   let navigation = useNavigation();
-
+  
   return (
     <View style={{height: '10%'}}>
       <View
@@ -26,23 +26,7 @@ const RenderHeader = () => {
           <Entypo name="menu" size={30} />
         </TouchableOpacity>
         <Image source={images.logo} style={{height: 30, width: '30%'}} />
-        <Text
-          style={{
-            position: 'absolute',
-            right: '-1%',
-            top: '20%',
-            fontSize: 10,
-            backgroundColor: colors.ORANGE.DEFAULT,
-            borderRadius: 50,
-            zIndex: 12,
-            height: 18,
-            width: 18,
-            textAlign: 'center',
-            paddingTop: 2,
-            color: 'white',
-          }}>
-          23
-        </Text>
+        
         <TouchableOpacity
           style={{position: 'absolute', right: '3%'}}
           onPress={() => navigation.navigate('Cart')}>
@@ -55,6 +39,8 @@ const RenderHeader = () => {
 };
 let Login = ({route}) => {
   let navigation = useNavigation();
+  const data = route.params.data ? route.params.data : '' ;
+
   return (
     <View
       style={{
@@ -88,7 +74,7 @@ let Login = ({route}) => {
               fontFamily: 'sans-serif',
               color: 'black',
             }}>
-            Sameer
+            {data.user_name}
           </Text>
         </TouchableOpacity>
 
@@ -117,13 +103,8 @@ let Login = ({route}) => {
                 Noine
               </Text>
               {[
-                `Full Name: Sameer`,
-                'Address: Japah 23, kki heee 23, block 2 \n Johar Karachi',
-                `Email: sameer@gmail.com`,
-                `Phone: 123123123`,
-                'Country: Pakistan',
-                'City: Lahore',
-                'State: Sindh',
+                `Full Name: ${data.user_name}`,
+                `Email: ${data.user_email}`,
               ].map((item, key) => (
                 <Text
                   style={{
@@ -140,13 +121,14 @@ let Login = ({route}) => {
                 Product Information
               </Text>
               {[
-                `Product ID: 233`,
-                `Product Name: number 8`,
-                `Unit Cost: 1000`,
-                `Quantity: 5`,
-                `Payment Method: cash`,
-                `Delivery Category: Normal`,
-                `Delivery Charges: 20`,
+                `Product ID: ${data.pro_id}`,
+                `Product Name: ${data.pro_name}`,
+                `Product Description: ${data.pro_desc}`,
+                `Unit Cost: ${data.pro_price}`,
+                `Quantity: ${data.order_qty}`,
+                `Payment Method: ${data.payment}`,
+                `Delivery Category: ${data.delivery_cat_id}`,
+                // `Delivery Charges: 20`,
               ].map((item, key) => (
                 <Text
                   style={{
@@ -166,7 +148,7 @@ let Login = ({route}) => {
                   paddingTop: 5,
                   fontWeight: 'bold',
                 }}>
-                Total: $233
+                Total: {data.pro_price}
               </Text>
             </View>
           </View>

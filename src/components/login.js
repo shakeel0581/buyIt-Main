@@ -29,7 +29,7 @@ function login() {
   const [pop, setPop] = useState('');
 
   const clickcheckbox = () => {
-    setCheckBox(true);
+    setCheckBox(!Checkbox);
   }
 
   const handleLoginTap = (e) => {
@@ -69,18 +69,6 @@ function login() {
             )
           })
         }
-        // console.log(json.Data[0])
-        // console.log(json.status)
-        // console.log()
-        // AsyncStorage.setItem('userData', JSON.stringify(json.Data[0])).then(
-        //   () =>
-        //     AsyncStorage.getItem('userData').then((result) => {
-        //       let user = JSON.parse(result);
-        //     }),
-        // );
-
-        // setUsr('');
-        // setPwd('');
       })
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
@@ -92,7 +80,7 @@ function login() {
   return (
     <ScrollView>
       <View style={styles.form}>
-        <Text>Username Or Email Address</Text>
+        <Text>Username Or Email Address*</Text>
         <TextInput
           style={[styles.textb, {color: '#808080'}]}
           placeholder={'Name'}
@@ -101,7 +89,7 @@ function login() {
           value={usr}
           onChangeText={(text) => setUsr(text)}
         />
-        <Text>Password</Text>
+        <Text>Password*</Text>
         <TextInput
           style={[styles.textb, {color: '#808080'}]}
           placeholder={'Password'}
@@ -115,28 +103,27 @@ function login() {
         <View style={styles.chck}>
           <CheckBox
             checked={Checkbox}
-          onPress={clickcheckbox}
-        
+            onPress={clickcheckbox}
             tintColors={{true: '#F15927', false: 'black'}}
             style={{marginLeft: -10}}
           />
           <Text style={{marginLeft: 20, fontWeight: 'bold'}}> Remember Me</Text>
         </View>
         <TouchableOpacity style={styles.login} onPress={handleLoginTap}>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: '500',
-              alignContent: 'center',
-              color: 'orange',
-            }}>
-            Login
-          </Text>
+        <View style={{ flexDirection: 'row' }}>
+            <Text style={styles.btns}>Login</Text>
+            <Icon
+              name="arrow-right"
+              type="font-awesome"
+              size={24}
+              color="orange"
+            />
+          </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {
                 navigation.navigate('Signup');
               }}>
-        <Text style={{color: 'orange', fontSize: 18, textAlign:'center', padding: 15}}> Signup! </Text>
+        <Text style={{color: 'orange', fontSize: 18, textAlign:'center', padding: 15}}> Register ! </Text>
         </TouchableOpacity>
         
         <View
@@ -158,29 +145,12 @@ function login() {
             marginBottom: 20,
           }}
         />
-        
-
         <TouchableOpacity
           style={styles.logins}
           onPress={() => {
             Alert.alert('login with Google');
           }}>
           <Text style={styles.btn}>Login with Google</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.logins}
-          onPress={() => {
-            Alert.alert('login With Facebook');
-          }}>
-          <View style={{flexDirection: 'row'}}>
-            <Icon
-              name="facebook-f"
-              type="font-awesome"
-              size={24}
-              color="blue"
-            />
-            <Text style={styles.btn}>Login with Facebook</Text>
-          </View>
         </TouchableOpacity>
       </View>
     </ScrollView>

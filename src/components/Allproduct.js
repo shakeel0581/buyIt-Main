@@ -38,72 +38,11 @@ const initialLayout = { width: Dimensions.get('window').width };
 const initialLayoutHeight = { width: Dimensions.get('window').height };
 const uniqueId = require("react-native-unique-id");
 
-const Header = () => {
-  const refRBSheetBottom = useRef();
-  const [modalVisible, setModalVisible] = useState(false);
+const Header = ({coutn}) => {
+
   let navigation = useNavigation();
-  const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [refRBSheet, setrefRBSheet] = useState(refRBSheetBottom);
-  const [tex, setText] = useState('username');
-  const [pwd, setPwd] = useState(' ');
-  // const tex = 'username';
-  // const pwd = 'password';
-  useEffect(() => {
-    fetch(
-      'https://thecodeditors.com/test/buy_it/api-user-login.php?email=' +
-      tex +
-      '&password=' +
-      pwd,
-      //'http://thecodeditors.com/test/buy_it/api-user-login.php?email=sameershk819@gmail.com&password=passcode1212',
-    )
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, [tex, pwd]);
-  useEffect(() => {
-    //AsyncStorage.getItem('userId').then((result) => console.log(result));
-    // async () => {
-    //   const userData = await AsyncStorage.getItem('userData');
-    //   console.log('data', JSON.parse(userData));
-    // };
-  }, []);
-  //AsyncStorage.getItem('userId').then((result) => console.log(result));
-
-  //console.log(tex);
-  //console.log(pwd);
-  //console.log(data.Data);
-
   return (
     <View style={{ height: '10%' }}>
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <ScrollView>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'white',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <View
-              style={{
-                width: 400,
-                height: Dimensions.get('window').height * 0.98,
-              }}>
-              <TouchableHighlight
-                style={{ ...styles.openButton, backgroundColor: '#469FA6' }}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}>
-                <Text style={styles.textStyle}>Cancel</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </ScrollView>
-      </Modal>
-
       <View
         style={{
           width: '95%',
@@ -136,14 +75,12 @@ const Header = () => {
             paddingTop: 2,
             color: 'white',
           }}>
-          25
+          {coutn}
         </Text>
         <TouchableOpacity
           style={{ position: 'absolute', right: '3%' }}
           onPress={() => navigation.navigate('Cart')}
         >
-          <BottomAccount refRBSheet={refRBSheet} />
-
           <AntDesign name="shoppingcart" size={40} />
           <Text>cart</Text>
         </TouchableOpacity>
@@ -162,29 +99,30 @@ const Allproduct = (props) => {
   const [Allproduct, setAllproduct] = useState([]);
   const [cart, setCart] = useState([]);
   const [UserID, setUserID] = useState('');
-
+  const [coutn, setCount] = useState(0);
   useEffect(() => {
     AsyncStorage.getItem('userData').then((user) => {
-      if(user){
-        const userData = JSON.parse(user);
-        setUserID(userData.user_id);
-      }
-      if (v_id) {
-        fetch(api.shopProducts + v_id)
-          .then((response) => response.json())
-          .then((json) => {
-            setAllproduct(json);
-          })
-          .catch((error) => console.error(error))
-      } else {
-        fetch(api.allproduct)
-          .then((response) => response.json())
-          .then((json) => {
-            setAllproduct(json);
+    
+        if (user) {
+          const userData = JSON.parse(user);
+          setUserID(userData.user_id);
+        }
+        if (v_id) {
+          fetch(api.shopProducts + v_id)
+            .then((response) => response.json())
+            .then((json) => {
+              setAllproduct(json);
+            })
+            .catch((error) => console.error(error))
+        } else {
+          fetch(api.allproduct)
+            .then((response) => response.json())
+            .then((json) => {
+              setAllproduct(json);
 
-          })
-          .catch((error) => console.error(error))
-      }
+            })
+            .catch((error) => console.error(error))
+        }
     });
   }, []);
 
@@ -237,16 +175,17 @@ const Allproduct = (props) => {
                 console.log('result' + result);
                 let user = JSON.parse(result);
                 const uri =
-                  api.addcart +user+
+                  api.addcart + user +
                   '&product_id=' +
                   item.pro_id +
-                  '&quantity=1&user_id='+UserID;
+                  '&quantity=1&user_id=' + UserID;
 
                 console.log(uri);
                 fetch(uri)
                   .then((response) => response.json())
                   .then((json) => {
                     setCart(json);
+                    props.addCount();
                     // console.log(cart);
                     ToastAndroid.show(
                       'Item Added To Cart',
@@ -325,15 +264,30 @@ const App = (props) => {
   const { SHOP_ID, V_Name } = props.route.params;
   //const {ch} = route.params;
   const screenHeight = Dimensions.get('window').height;
+  const [coutn, setCount] = useState(0);
+  useEffect(() => {
+      AsyncStorage.getItem('RandomNumber').then((result) => {
+        let Rnumber = JSON.parse(result);
+        const uri = api.cartshow + Rnumber
+        fetch(uri)
+          .then((response) => response.json())
+          .then((json) => {
+            if (json.Data) {
+              setCount(json.Data.length);
+            }
+          })
+          .catch((error) => console.error(error));
+    });
+  }, []);
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <Header />
+      <Header coutn={coutn} />
       <View style={{ height: screenHeight, alignItems: 'center' }}>
         <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 10, marginLeft: 10, color: '#5b5e5c' }}>
           {V_Name == '' ? 'All Products' : V_Name}
         </Text>
-        <Allproduct {...props} />
+        <Allproduct {...props}  addCount={() => setCount(coutn+1)} />
 
       </View>
     </>

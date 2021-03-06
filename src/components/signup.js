@@ -140,21 +140,6 @@ function signup(props) {
           }}>
           <Text style={styles.btn}>Login with Google</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.logins}
-          onPress={() => {
-            Alert.alert('login With Facebook');
-          }}>
-          <View style={{ flexDirection: 'row' }}>
-            <Icon
-              name="facebook-f"
-              type="font-awesome"
-              size={24}
-              color="blue"
-            />
-            <Text style={styles.btn}>Login with Facebook</Text>
-          </View>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
