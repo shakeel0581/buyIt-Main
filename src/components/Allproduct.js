@@ -156,10 +156,9 @@ const Allproduct = (props) => {
       <View
         style={{
           justifyContent: 'center',
-
           flex: 1,
-
           marginTop: 0,
+          marginBottom:50
         }}>
         <FlatList
           refreshing={isLoading}
@@ -199,7 +198,7 @@ const Allproduct = (props) => {
 
             return (
 
-              <View style={{ height: 250, width: "50%", }}>
+              <View style={{  width: "50%", }}>
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate('ProductDetails', { id: item.pro_id, pic: featuredslider + item.image_name })
@@ -263,7 +262,7 @@ const App = (props) => {
   let navigation = useNavigation();
   const { SHOP_ID, V_Name } = props.route.params;
   //const {ch} = route.params;
-  const screenHeight = Dimensions.get('window').height;
+  const screenHeight = Dimensions.get('window').height-110;
   const [coutn, setCount] = useState(0);
   useEffect(() => {
       AsyncStorage.getItem('RandomNumber').then((result) => {
@@ -283,7 +282,7 @@ const App = (props) => {
     <>
       <StatusBar barStyle="dark-content" />
       <Header coutn={coutn} />
-      <View style={{ height: screenHeight, alignItems: 'center' }}>
+      <View style={{ height: screenHeight, alignItems: 'center'}}>
         <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 10, marginLeft: 10, color: '#5b5e5c' }}>
           {V_Name == '' ? 'All Products' : V_Name}
         </Text>

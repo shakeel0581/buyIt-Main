@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   FlatList,
   Alert,
+  ToastAndroid
 } from 'react-native';
 import { Icon } from 'native-base';
 import { colors, images } from './constant';
@@ -67,7 +68,7 @@ const RenderHeader = ({ coutn }) => {
   );
 };
 
-let Login = () => {
+let Login = (props) => {
 
   let navigation = useNavigation();
   const [isLoading, setLoading] = useState(true);
@@ -107,7 +108,7 @@ let Login = () => {
                 setCount(json.Data.length);
                 let pp = 0;
                 json.Data.map((val) => {
-                  pp += parseInt(val.pro_price)
+                  pp += parseInt(val.pro_price) * parseInt(val.qty);
                 })
                 setTotalPrice(pp);
               }
@@ -119,6 +120,33 @@ let Login = () => {
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
   };
+
+  const init = () => {
+    AsyncStorage.getItem('RandomNumber').then((result) => {
+      console.log('RandomNumberrr' + result);
+      let Rnumber = JSON.parse(result);
+      const uri = api.cartshow + Rnumber
+      console.log(uri);
+      setIsLoading(true);
+
+      fetch(uri)
+        .then((response) => response.json())
+        .then((json) => {
+          setIsLoading(false);
+          setData(json);
+          if (json.Data) {
+            setCount(json.Data.length);
+            let pp = 0;
+            json.Data.map((val) => {
+              pp += parseInt(val.pro_price) * parseInt(val.qty);
+            })
+            setTotalPrice(pp);
+          }
+        })
+        .catch((error) => console.error(error))
+        .finally(() => setLoading(false));
+    });
+  }
 
 
   let [totalQuantity, setTotalQuantity] = useState(0);
@@ -146,7 +174,7 @@ let Login = () => {
             setCount(json.Data.length);
             let pp = 0;
             json.Data.map((val) => {
-              pp += parseInt(val.pro_price)
+              pp += parseInt(val.pro_price) * parseInt(val.qty);
             })
             setTotalPrice(pp);
           }
@@ -171,7 +199,7 @@ let Login = () => {
               setCount(json.Data.length);
               let pp = 0;
               json.Data.map((val) => {
-                pp += parseInt(val.pro_price)
+                pp += parseInt(val.pro_price) * parseInt(val.qty);
               })
               setTotalPrice(pp);
             }
@@ -222,6 +250,25 @@ let Login = () => {
             data={data.Data}
             renderItem={({ item }) => {
               price += parseInt(item.pro_price)
+              const AddToCart = (e) => {
+                AsyncStorage.getItem('RandomNumber').then((result) => {
+                  let user = JSON.parse(result);
+                  const uri ='https://thecodeditors.com/test/buy_it/api-get-cartadd.php?guest_id='+user+'&product_id='+item.pro_id+'&quantity=1&user_id=';
+                  console.log(uri);
+                  fetch(uri)
+                    .then((response) => response.json())
+                    .then((json) => {
+                      
+                      init();
+                      ToastAndroid.show(
+                        'Item Added To Cart',
+                        ToastAndroid.SHORT,
+                      );
+                    })
+                    .catch((error) => console.error(error))
+                    .finally(() => setLoading(false));
+                });
+              };
               return (<View
                 // onPress={setTotalPrice((price += parseInt(item.pro_price)))}
                 style={{
@@ -263,16 +310,18 @@ let Login = () => {
                       {item.pro_name}
                     </Text>
                   </View>
-                  <Text
-                    style={{
+                  
+                    <Text style={{
                       color: 'gray',
                       fontSize: 14,
                       textAlign: 'center',
                       marginTop: 10,
                       textTransform: 'capitalize',
-                    }}>
-                    Shipping charges according to distance
-                    </Text>
+                    }}>Shipping charges according to distance</Text>
+                    
+                    <TouchableOpacity
+                  onPress={() => props.navigation.navigate('ShippingCharge')}
+                    >
                   <Text
                     style={{
                       color: colors.ORANGE.DEFAULT,
@@ -283,6 +332,7 @@ let Login = () => {
                     }}>
                     View Shipping Charges of vender
                     </Text>
+                    </TouchableOpacity>
                   <Text
                     style={{
                       color: 'black',
@@ -305,11 +355,11 @@ let Login = () => {
                       marginRight: 'auto',
                       marginVertical: 10,
                     }}>
-                    <TouchableOpacity>
+                    <TouchableOpacity >
                       <Feather name="minus" />
                     </TouchableOpacity>
                     <Text>{item.qty}</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => AddToCart()}>
                       <Feather name="plus" />
                     </TouchableOpacity>
                   </View>

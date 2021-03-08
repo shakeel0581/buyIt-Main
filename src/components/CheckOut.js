@@ -28,7 +28,7 @@ import {Icon} from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather';
 import {api} from './constant';
 
-const RenderHeader = () => {
+const RenderHeader = ({navigation}) => {
   return (
     <View style={{height: '10%'}}>
       <View
@@ -39,7 +39,7 @@ const RenderHeader = () => {
           flexDirection: 'row',
           alignSelf: 'center',
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
           <Entypo name="menu" size={30} />
         </TouchableOpacity>
         <Image source={images.logo} style={{height: 30, width: '30%'}} />
@@ -111,8 +111,10 @@ const CheckOut = ({route, navigation}) => {
         Alert.alert('Enter Phone');
         return;
       }
-      if (Email == '') {
-        Alert.alert('Enter Email');
+      let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    
+      if (Email == '' || reg.test(Email) === false) {
+        Alert.alert('Enter valid Email');
         return;
       }
       //city=karachi&state=sindh&zip=787898&phone=03001234567&email=demo@gmail.com&payment
@@ -254,7 +256,7 @@ const CheckOut = ({route, navigation}) => {
         flex: 1,
         backgroundColor: colors.WHITE,
       }}>
-      <RenderHeader />
+      <RenderHeader navigation={navigation} />
       <Text
         style={{padding: 10, borderRadius: 1, elevation: 1, marginBottom: 10}}>
         Home <Feather name="chevron-right" size={15} /> Shopping Cart{' '}
@@ -349,6 +351,7 @@ const CheckOut = ({route, navigation}) => {
               <TextInput
                 style={[styles.textb, {color: '#808080'}]}
                 placeholder={'#Phone'}
+                keyboardType="number-pad"
                 placeholderTextColor={'#808080'}
                 autoCapitilize={false}
                 onChangeText={(text) => setPhone(text)}
@@ -357,6 +360,7 @@ const CheckOut = ({route, navigation}) => {
               <TextInput
                 style={[styles.textb, {color: '#808080'}]}
                 placeholder={'Email'}
+                keyboardType="email-address"
                 placeholderTextColor={'#808080'}
                 autoCapitilize={false}
                 onChangeText={(text) => setEmail(text)}

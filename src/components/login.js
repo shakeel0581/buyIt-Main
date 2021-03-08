@@ -100,15 +100,15 @@ function login() {
           onChangeText={(text) => setPwd(text)}
         />
         <Text>Forgot Your Password?</Text>
-        <View style={styles.chck}>
+        <TouchableOpacity onPress={clickcheckbox} style={styles.chck}>
           <CheckBox
             checked={Checkbox}
-            onPress={clickcheckbox}
+            
             tintColors={{true: '#F15927', false: 'black'}}
             style={{marginLeft: -10}}
           />
           <Text style={{marginLeft: 20, fontWeight: 'bold'}}> Remember Me</Text>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.login} onPress={handleLoginTap}>
         <View style={{ flexDirection: 'row' }}>
             <Text style={styles.btns}>Login</Text>

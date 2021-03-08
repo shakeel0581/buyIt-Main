@@ -54,26 +54,10 @@ const Events = () => {
                     </TouchableOpacity>
                 </Left>
                 <Body>
-                    <Text>Orders</Text>
+                    <Text>Shipping Charge</Text>
                 </Body>
             </Header>
-            <FlatList
-                style={{ flex: 1 }}
-                data={date}
-                renderItem={({ item }) =>
-                    <TouchableOpacity 
-                        onPress={() => navigation.navigate('CheckStatus',{data: item}) }
-                    style={styles.container}>
-                        <View style={{ width: '50%' }}>
-                            <Text style={styles.title}> {item.pro_name}</Text> 
-                            <Text style={[styles.desc,{color:colors.ORANGE.DEFAULT,}]}> {item.pro_desc}</Text>
-                            <Text style={[styles.date]}> PKR {item.pro_price}</Text>
-                            <Text style={[styles.date,{color:'green',fontWeight:'bold'}]}> {item.order_status}</Text>
-                        </View>
-                    </TouchableOpacity>
-                }
-                keyExtractor={({item,index}) => Math.random()}
-            />
+           <Text></Text>
         </Container>
     );
 };

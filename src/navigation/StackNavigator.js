@@ -54,7 +54,8 @@ import usernav from '../components/usernavigator/AdDrawerNavigator'
 import Allproduct from '../components/Allproduct';
 import Dashboard from '../components/dashboard';
 import Order2 from '../components/order';
-
+import TermPolicy from '../components/termPolicy';
+import ShippingCharge from "../components/shippingCharge";
 import { api } from '../components/constant';
 
 const Stack = createStackNavigator();
@@ -338,11 +339,23 @@ const App = () => {
         />
         <Drawer.Screen name="ProductDetails" component={ProductDetails} />
         <Drawer.Screen name="CategoriesList" component={CategoriesList} />
+        <Drawer.Screen
+            name="Allproduct"
+            component={Allproduct}
+          />
         <Drawer.Screen name="CheckOrders" component={CheckOrders} />
         <Drawer.Screen name="Cart" component={Cart} />
         <Drawer.Screen name="MyProfile" component={MyProfile} />
         <Drawer.Screen name="ShopScreen" component={ShopScreen} />
         <Drawer.Screen name="ChangePassword" component={ChangePassword} />
+        <Drawer.Screen
+            name="WishList"
+            component={WishList}
+          />
+           <Drawer.Screen
+            name="CheckOut"
+            component={CheckOut}
+          />
       </Drawer.Navigator>
     );
   }
@@ -435,14 +448,20 @@ const App = () => {
             options={options}
           /> */}
           <Stack.Screen name="login" component={login} options={options} />
-          <Stack.Screen
-            name="WishList"
-            component={WishList}
-            options={options}
-          />
+          
           <Stack.Screen
             name="CheckStatus"
             component={CheckStatus}
+            options={options}
+          />
+          <Stack.Screen
+            name="TermPolicy"
+            component={TermPolicy}
+            options={options}
+          />
+          <Stack.Screen
+            name="ShippingCharge"
+            component={ShippingCharge}
             options={options}
           />
           {/* <Stack.Screen
@@ -466,16 +485,8 @@ const App = () => {
             component={CheckOrders}
             options={options}
           />
-          <Stack.Screen
-            name="CheckOut"
-            component={CheckOut}
-            options={options}
-          />
-          <Stack.Screen
-            name="Allproduct"
-            component={Allproduct}
-            options={options}
-          />
+         
+          
           <Stack.Screen
             name="ProductDetails"
             component={ProductDetails}

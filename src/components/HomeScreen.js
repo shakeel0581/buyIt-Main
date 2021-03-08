@@ -543,7 +543,7 @@ const FeaturedSlider = ({ countPrss, userID }) => {
                       color: colors.ORANGE.DEFAULT,
                       textAlign: 'center',
                     }}>
-                    Add fff
+                    Add
                     </Text>
                 </TouchableOpacity>
               </View>

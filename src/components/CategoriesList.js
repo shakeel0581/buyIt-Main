@@ -142,22 +142,22 @@ let CategoriesList = ({route}) => {
             // <Text style={styles.item} onPress={CategoriesTap}>
             //   {item.sub_catname}
             // </Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity onPress={() =>
+              navigation.navigate('CategoriesProductList', {
+                cat: id,
+                sub_id: item.sub_cat_id,
+              })
+            } style={{flexDirection: 'row', alignItems: 'center',marginHorizontal:10,marginVertical:5}}>
               <Avatar.Image
                 size={70}
                 source={{uri: catlist + item.sub_image}}
               />
               <Text
                 style={styles.item}
-                onPress={() =>
-                  navigation.navigate('CategoriesProductList', {
-                    cat: id,
-                    sub_id: item.sub_cat_id,
-                  })
-                }>
+                >
                 {item.sub_catname}
               </Text>
-            </View>
+            </TouchableOpacity>
           )}
         />
       </View>

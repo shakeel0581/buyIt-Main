@@ -70,6 +70,10 @@ function signup(props) {
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   };
+  const [Checkbox, setCheckBox] = useState(false);
+  const clickcheckbox = () => {
+      setCheckBox(!Checkbox);
+    }
 
   return (
     <ScrollView>
@@ -104,9 +108,10 @@ function signup(props) {
         />
 
         <View style={styles.chck}>
-          <CheckBox color="#d3d3d3" backgroundColor="#d3d3d3" />
+          <CheckBox checked={Checkbox}
+            onPress={clickcheckbox} color="#d3d3d3" backgroundColor="#d3d3d3" />
           <Text style={{ paddingLeft: 15 }}>I agree to the </Text>
-          <Text style={{ textDecorationLine: 'underline' }}>
+          <Text onPress={() => props.navigation.navigate('TermPolicy')} style={{ textDecorationLine: 'underline' }}>
             privacy policy *
           </Text>
         </View>
